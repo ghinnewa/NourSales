@@ -2,6 +2,7 @@
 namespace App\Filament\Resources\PaymentResource\Pages;
 
 use App\Filament\Resources\PaymentResource;
+use App\Models\Order;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreatePayment extends CreateRecord
@@ -12,8 +13,13 @@ class CreatePayment extends CreateRecord
     {
         parent::mount();
 
-        if (request()->has('pharmacy_id')) {
-            $this->form->fill(['pharmacy_id' => request()->integer('pharmacy_id')]);
+        $orderId = request()->integer('order_id');
+        if ($orderId && ($order = Order::find($orderId))) {
+            $this->form->fill([
+                'order_id' => $orderId,
+                'pharmacy_id' => $order->pharmacy_id,
+                'amount' => $order->remaining_amount,
+            ]);
         }
     }
 }
