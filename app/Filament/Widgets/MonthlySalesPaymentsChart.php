@@ -9,7 +9,7 @@ use Filament\Widgets\ChartWidget;
 
 class MonthlySalesPaymentsChart extends ChartWidget
 {
-    protected static ?string $heading = 'Monthly Sales vs Payments';
+    protected static ?string $heading = 'المبيعات والدفعات الشهرية';
 
     protected int|string|array $columnSpan = 'full';
 
@@ -33,8 +33,8 @@ class MonthlySalesPaymentsChart extends ChartWidget
 
         return [
             'datasets' => [
-                ['label' => 'Sales', 'data' => $salesData, 'borderColor' => '#2563EB', 'backgroundColor' => 'rgba(37,99,235,0.2)'],
-                ['label' => 'Payments', 'data' => $paymentsData, 'borderColor' => '#16A34A', 'backgroundColor' => 'rgba(22,163,74,0.2)'],
+                ['label' => 'المبيعات', 'data' => $salesData, 'borderColor' => '#2563EB', 'backgroundColor' => 'rgba(37,99,235,0.2)'],
+                ['label' => 'الدفعات', 'data' => $paymentsData, 'borderColor' => '#16A34A', 'backgroundColor' => 'rgba(22,163,74,0.2)'],
             ],
             'labels' => $labels,
         ];

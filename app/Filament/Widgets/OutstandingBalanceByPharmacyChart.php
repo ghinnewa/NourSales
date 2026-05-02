@@ -6,7 +6,7 @@ use Filament\Widgets\ChartWidget;
 
 class OutstandingBalanceByPharmacyChart extends ChartWidget
 {
-    protected static ?string $heading = 'Top Outstanding Balance by Pharmacy';
+    protected static ?string $heading = 'الرصيد المستحق حسب الصيدلية';
     protected int|string|array $columnSpan = 'full';
 
     protected function getData(): array
@@ -20,7 +20,7 @@ class OutstandingBalanceByPharmacyChart extends ChartWidget
 
         return [
             'datasets' => [[
-                'label' => 'Outstanding Balance',
+                'label' => 'الرصيد المستحق',
                 'data' => $data->pluck('balance')->all(),
                 'backgroundColor' => '#F97316',
             ]],

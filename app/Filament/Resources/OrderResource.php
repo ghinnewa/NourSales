@@ -18,10 +18,10 @@ class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
-    protected static ?string $navigationGroup = 'Sales';
-    protected static ?string $navigationLabel = 'Invoices';
-    protected static ?string $modelLabel = 'Invoice';
-    protected static ?string $pluralModelLabel = 'Invoices';
+    protected static ?string $navigationGroup = 'المبيعات';
+    protected static ?string $navigationLabel = 'الفواتير';
+    protected static ?string $modelLabel = 'فاتورة';
+    protected static ?string $pluralModelLabel = 'الفواتير';
 
     public static function form(Form $form): Form
     {
@@ -36,27 +36,27 @@ class OrderResource extends Resource
         };
 
         return $form->schema([
-            Forms\Components\Section::make('Invoice Details')->schema([
+            Forms\Components\Section::make('بيانات الفاتورة')->schema([
                 Forms\Components\Select::make('pharmacy_id')->relationship('pharmacy', 'pharmacy_name')->required()->searchable()->preload(),
                 Forms\Components\DatePicker::make('invoice_date')->required()->default(now()->toDateString()),
                 Forms\Components\Select::make('status')
-                    ->options(['pending' => 'Pending', 'delivered' => 'Delivered', 'closed' => 'Closed', 'cancelled' => 'Cancelled'])
+                    ->options(['pending' => 'قيد الانتظار', 'delivered' => 'تم التسليم', 'closed' => 'مغلقة', 'cancelled' => 'ملغاة'])
                     ->default('pending')
                     ->live()
                     ->required(),
                 Forms\Components\DateTimePicker::make('closed_at')
-                    ->label('Closed At')
+                    ->label('تاريخ الإغلاق')
                     ->seconds(false)
                     ->visible(fn (Get $get): bool => $get('status') === 'closed'),
             ])->columns(2),
 
-            Forms\Components\Section::make('Invoice Items')->schema([
+            Forms\Components\Section::make('عناصر الفاتورة')->schema([
                 Forms\Components\Repeater::make('orderItems')
                     ->relationship()
                     ->defaultItems(1)
                     ->schema([
                         Forms\Components\Select::make('product_id')
-                            ->label('Product')
+                            ->label('المنتج')
                             ->relationship('product', 'name')
                             ->searchable()
                             ->preload()
@@ -113,7 +113,7 @@ class OrderResource extends Resource
                     ->columns(2)
                     ->columnSpanFull(),
                 Forms\Components\Placeholder::make('invoice_total_preview')
-                    ->label('Invoice Total')
+                    ->label('إجمالي الفاتورة')
                     ->content(function (Get $get): string {
                         $total = app(InvoiceCalculationService::class)->calculateInvoiceTotal($get('orderItems') ?? []);
 
@@ -121,7 +121,7 @@ class OrderResource extends Resource
                     }),
             ]),
 
-            Forms\Components\Section::make('Notes & Deal Details')->schema([
+            Forms\Components\Section::make('الملاحظات وتفاصيل الاتفاق')->schema([
                 Forms\Components\Textarea::make('notes')->rows(3)->nullable(),
                 Forms\Components\Textarea::make('deal_notes')->rows(4)->nullable(),
                 Forms\Components\Textarea::make('internal_notes')->rows(4)->nullable(),
@@ -134,10 +134,10 @@ class OrderResource extends Resource
         return $table->columns([
             Tables\Columns\TextColumn::make('id')->label('Invoice #'), Tables\Columns\TextColumn::make('pharmacy.pharmacy_name'), Tables\Columns\TextColumn::make('invoice_date')->date(),
             Tables\Columns\TextColumn::make('total_price')->money('USD'), Tables\Columns\TextColumn::make('paid_amount')->money('USD'), Tables\Columns\TextColumn::make('remaining_amount')->money('USD'),
-            Tables\Columns\TextColumn::make('payment_status')->badge(), Tables\Columns\TextColumn::make('status')->badge()->label('Invoice Status'), Tables\Columns\TextColumn::make('commission_amount')->money('USD'), Tables\Columns\TextColumn::make('created_at')->dateTime(),
+            Tables\Columns\TextColumn::make('payment_status')->badge(), Tables\Columns\TextColumn::make('status')->badge()->label('حالات الفواتير'), Tables\Columns\TextColumn::make('commission_amount')->money('USD'), Tables\Columns\TextColumn::make('created_at')->dateTime(),
         ])->actions([
             Tables\Actions\ViewAction::make(), Tables\Actions\EditAction::make(), Tables\Actions\DeleteAction::make(),
-            Tables\Actions\Action::make('addPayment')->label('Add Payment')->url(fn(Order $record) => PaymentResource::getUrl('create', ['order_id'=>$record->id])),
+            Tables\Actions\Action::make('addPayment')->label('إضافة دفعة')->url(fn(Order $record) => PaymentResource::getUrl('create', ['order_id'=>$record->id])),
         ]);
     }
 
