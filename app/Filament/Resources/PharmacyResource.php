@@ -43,6 +43,12 @@ class PharmacyResource extends Resource
                     ->schema([
                         Forms\Components\Textarea::make('notes')->rows(4)->columnSpanFull(),
                     ]),
+                Forms\Components\Section::make('Commercial Notes')
+                    ->schema([
+                        Forms\Components\Textarea::make('deal_notes')->rows(4)->nullable(),
+                        Forms\Components\Textarea::make('payment_notes')->rows(4)->nullable(),
+                    ])
+                    ->columns(1),
             ]);
     }
 

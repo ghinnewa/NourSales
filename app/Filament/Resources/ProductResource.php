@@ -51,6 +51,16 @@ class ProductResource extends Resource
                         Forms\Components\Textarea::make('description')
                             ->columnSpanFull(),
                     ]),
+                Forms\Components\Section::make('Bonus Settings')
+                    ->schema([
+                        Forms\Components\Toggle::make('bonus_eligible')
+                            ->label('Bonus Eligible')
+                            ->default(false),
+                        Forms\Components\Textarea::make('bonus_notes')
+                            ->nullable()
+                            ->rows(3)
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 
@@ -68,6 +78,9 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('price')
                     ->money('USD')
                     ->sortable(),
+                Tables\Columns\IconColumn::make('bonus_eligible')
+                    ->boolean()
+                    ->label('Bonus Eligible'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),

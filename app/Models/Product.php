@@ -16,6 +16,12 @@ class Product extends Model
         'price',
         'image',
         'description',
+        'bonus_eligible',
+        'bonus_notes',
+    ];
+
+    protected $casts = [
+        'bonus_eligible' => 'boolean',
     ];
 
     public function orderItems(): HasMany

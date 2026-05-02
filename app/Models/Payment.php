@@ -12,8 +12,24 @@ class Payment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['pharmacy_id', 'order_id', 'amount', 'payment_date', 'payment_method', 'notes'];
-    protected $casts = ['amount' => 'decimal:2', 'payment_date' => 'date'];
+    protected $fillable = [
+        'pharmacy_id',
+        'order_id',
+        'amount',
+        'payment_date',
+        'payment_method',
+        'notes',
+        'is_cash_bonus',
+        'is_single_transaction_bonus',
+        'bonus_notes',
+    ];
+
+    protected $casts = [
+        'amount' => 'decimal:2',
+        'payment_date' => 'date',
+        'is_cash_bonus' => 'boolean',
+        'is_single_transaction_bonus' => 'boolean',
+    ];
 
     protected static function booted(): void
     {

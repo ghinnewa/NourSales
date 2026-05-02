@@ -33,11 +33,27 @@ class ViewOrder extends ViewRecord
                 TextEntry::make('commission_explain')->state(fn (?Order $record): string => $record?->isFullyPaid()
                     ? 'Paid: 5% if closed within 2 months, otherwise 3%.'
                     : 'Unpaid/partial: eligible for 5% if fully paid before invoice date + 2 months.'),
+                TextEntry::make('notes')->placeholder('-')->columnSpanFull(),
+                TextEntry::make('deal_notes')->placeholder('-')->columnSpanFull(),
+                TextEntry::make('internal_notes')->placeholder('-')->columnSpanFull(),
             ])->columns(2),
             Section::make('Invoice Items')->schema([RepeatableEntry::make('orderItems')->schema([
-                TextEntry::make('product.name'),TextEntry::make('quantity'),TextEntry::make('price_at_time')->money('USD'),TextEntry::make('line_total')->money('USD')])->columns(4)]),
+                TextEntry::make('product.name'),
+                TextEntry::make('quantity'),
+                TextEntry::make('bonus_quantity'),
+                TextEntry::make('price_at_time')->money('USD'),
+                TextEntry::make('line_total')->money('USD'),
+                TextEntry::make('bonus_notes')->placeholder('-')->columnSpanFull(),
+            ])->columns(5)]),
             Section::make('Payment History')->schema([RepeatableEntry::make('payments')->schema([
-                TextEntry::make('payment_date')->date(),TextEntry::make('amount')->money('USD'),TextEntry::make('payment_method'),TextEntry::make('notes')])->columns(4)]),
+                TextEntry::make('payment_date')->date(),
+                TextEntry::make('amount')->money('USD'),
+                TextEntry::make('payment_method'),
+                \Filament\Infolists\Components\IconEntry::make('is_cash_bonus')->boolean()->label('Cash Bonus'),
+                \Filament\Infolists\Components\IconEntry::make('is_single_transaction_bonus')->boolean()->label('Single Tx Bonus'),
+                TextEntry::make('bonus_notes')->placeholder('-'),
+                TextEntry::make('notes')->placeholder('-'),
+            ])->columns(4)]),
         ]);
     }
 }

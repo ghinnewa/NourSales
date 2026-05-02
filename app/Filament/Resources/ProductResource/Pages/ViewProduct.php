@@ -33,6 +33,11 @@ class ViewProduct extends ViewRecord
                         Infolists\Components\TextEntry::make('brand'),
                         Infolists\Components\TextEntry::make('price')
                             ->money('USD'),
+                        Infolists\Components\IconEntry::make('bonus_eligible')
+                            ->boolean()
+                            ->label('Bonus Eligible'),
+                        Infolists\Components\TextEntry::make('bonus_notes')
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('description')
                             ->columnSpanFull(),
                         Infolists\Components\TextEntry::make('created_at')

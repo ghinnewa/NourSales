@@ -13,6 +13,14 @@ class CreatePayment extends CreateRecord
     {
         parent::mount();
 
+        $pharmacyId = request()->integer('pharmacy_id');
+
+        if ($pharmacyId) {
+            $this->form->fill([
+                'pharmacy_id' => $pharmacyId,
+            ]);
+        }
+
         $orderId = request()->integer('order_id');
         if ($orderId && ($order = Order::find($orderId))) {
             $this->form->fill([

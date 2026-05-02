@@ -13,11 +13,24 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'pharmacy_id','invoice_date','total_price','status','closed_at','commission_rate','commission_amount','notes',
+        'pharmacy_id',
+        'invoice_date',
+        'total_price',
+        'status',
+        'closed_at',
+        'commission_rate',
+        'commission_amount',
+        'notes',
+        'deal_notes',
+        'internal_notes',
     ];
 
     protected $casts = [
-        'invoice_date' => 'date','closed_at' => 'datetime','total_price' => 'decimal:2','commission_rate' => 'decimal:2','commission_amount' => 'decimal:2',
+        'invoice_date' => 'date',
+        'closed_at' => 'datetime',
+        'total_price' => 'decimal:2',
+        'commission_rate' => 'decimal:2',
+        'commission_amount' => 'decimal:2',
     ];
 
     protected $appends = ['paid_amount', 'remaining_amount', 'payment_status'];

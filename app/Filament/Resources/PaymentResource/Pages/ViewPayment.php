@@ -16,10 +16,13 @@ class ViewPayment extends ViewRecord
         return $infolist->schema([
             Section::make('Payment')->schema([
                 TextEntry::make('pharmacy.pharmacy_name')->label('Pharmacy'),
-                TextEntry::make('order_id')->label('Order #'),
+                TextEntry::make('order_id')->label('Invoice #'),
                 TextEntry::make('amount')->money('USD'),
                 TextEntry::make('payment_date')->date(),
                 TextEntry::make('payment_method'),
+                \Filament\Infolists\Components\IconEntry::make('is_cash_bonus')->boolean()->label('Cash Bonus'),
+                \Filament\Infolists\Components\IconEntry::make('is_single_transaction_bonus')->boolean()->label('Single Transaction Bonus'),
+                TextEntry::make('bonus_notes')->placeholder('-'),
                 TextEntry::make('notes'),
                 TextEntry::make('created_at')->dateTime(),
             ])->columns(2),

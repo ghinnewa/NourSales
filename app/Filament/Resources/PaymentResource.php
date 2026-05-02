@@ -23,7 +23,18 @@ class PaymentResource extends Resource
     {
         return $form->schema([
             Forms\Components\Select::make('order_id')->label('Invoice')->required()->searchable()->live()
-                ->options(fn () => Order::query()->with('pharmacy')->get()->mapWithKeys(fn ($o) => [$o->id => "Invoice #{$o->id} | {$o->pharmacy->pharmacy_name} | {$o->invoice_date->toDateString()} | Total ".number_format((float)$o->total_price,2)." | Remaining ".number_format($o->remaining_amount,2)])->toArray())
+                ->options(function (Forms\Get $get): array {
+                    $query = Order::query()->with('pharmacy');
+
+                    if ($pharmacyId = $get('pharmacy_id')) {
+                        $query->where('pharmacy_id', $pharmacyId);
+                    }
+
+                    return $query
+                        ->get()
+                        ->mapWithKeys(fn ($o) => [$o->id => "Invoice #{$o->id} | {$o->pharmacy->pharmacy_name} | {$o->invoice_date->toDateString()} | Total " . number_format((float) $o->total_price, 2) . " | Remaining " . number_format($o->remaining_amount, 2)])
+                        ->toArray();
+                })
                 ->afterStateUpdated(function ($state, Forms\Set $set) {
                     if ($order = Order::find($state)) {
                         $set('pharmacy_id', $order->pharmacy_id);
@@ -33,8 +44,39 @@ class PaymentResource extends Resource
             Forms\Components\Select::make('pharmacy_id')->relationship('pharmacy', 'pharmacy_name')->required()->disabled()->dehydrated(),
             Forms\Components\TextInput::make('amount')->required()->numeric()->minValue(0.01),
             Forms\Components\DatePicker::make('payment_date')->required()->default(now()->toDateString()),
-            Forms\Components\Select::make('payment_method')->options(['cash'=>'Cash','bank_transfer'=>'Bank Transfer','cheque'=>'Cheque','other'=>'Other']),
+            Forms\Components\Select::make('payment_method')
+                ->options(['cash' => 'Cash', 'bank_transfer' => 'Bank Transfer', 'cheque' => 'Cheque', 'other' => 'Other'])
+                ->required()
+                ->live(),
             Forms\Components\Textarea::make('notes')->columnSpanFull(),
+            Forms\Components\Section::make('Bonus / Deal Notes')->schema([
+                Forms\Components\Toggle::make('is_cash_bonus')
+                    ->default(false)
+                    ->helperText(fn (Forms\Get $get): string => $get('payment_method') === 'cash'
+                        ? 'Cash method selected. You can mark this payment as a cash bonus.'
+                        : 'Enable only when this payment qualifies for a cash bonus.'),
+                Forms\Components\Toggle::make('is_single_transaction_bonus')
+                    ->default(false)
+                    ->helperText(function (Forms\Get $get): string {
+                        $orderId = $get('order_id');
+
+                        if (! $orderId) {
+                            return 'Select an invoice first.';
+                        }
+
+                        $order = Order::find($orderId);
+                        $amount = (float) ($get('amount') ?? 0);
+
+                        if (! $order) {
+                            return 'Invoice not found.';
+                        }
+
+                        return $amount + 0.0001 >= (float) $order->remaining_amount
+                            ? 'Amount closes remaining balance in one transaction.'
+                            : 'Amount does not close the invoice yet.';
+                    }),
+                Forms\Components\Textarea::make('bonus_notes')->rows(3)->nullable()->columnSpanFull(),
+            ])->columns(2)->columnSpanFull(),
         ])->columns(2);
     }
 
@@ -46,6 +88,8 @@ class PaymentResource extends Resource
             Tables\Columns\TextColumn::make('amount')->money('USD'),
             Tables\Columns\TextColumn::make('payment_date')->date(),
             Tables\Columns\TextColumn::make('payment_method'),
+            Tables\Columns\IconColumn::make('is_cash_bonus')->boolean()->label('Cash Bonus'),
+            Tables\Columns\IconColumn::make('is_single_transaction_bonus')->boolean()->label('Single Tx Bonus'),
             Tables\Columns\TextColumn::make('created_at')->dateTime(),
         ])->filters([
             SelectFilter::make('payment_method')->options(['cash'=>'Cash','bank_transfer'=>'Bank Transfer','cheque'=>'Cheque','other'=>'Other']),

@@ -18,6 +18,8 @@ class Pharmacy extends Model
         'address',
         'google_maps_link',
         'notes',
+        'deal_notes',
+        'payment_notes',
     ];
 
     public function orders(): HasMany
