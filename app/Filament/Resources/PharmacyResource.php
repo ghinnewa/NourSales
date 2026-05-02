@@ -3,6 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PharmacyResource\Pages;
+use App\Filament\Resources\PharmacyResource\RelationManagers\OrdersRelationManager;
+use App\Filament\Resources\PharmacyResource\RelationManagers\PaymentsRelationManager;
 use App\Models\Pharmacy;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -68,6 +70,14 @@ class PharmacyResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            OrdersRelationManager::class,
+            PaymentsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array
