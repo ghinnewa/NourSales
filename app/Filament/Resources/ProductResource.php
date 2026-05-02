@@ -16,15 +16,15 @@ class ProductResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-cube';
 
-    protected static ?string $navigationGroup = 'Inventory';
+    protected static ?string $navigationGroup = 'المخزون';
 
-    protected static ?string $navigationLabel = 'Products';
+    protected static ?string $navigationLabel = 'المنتجات';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Product Details')
+                Forms\Components\Section::make('بيانات المنتج')
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->required()
@@ -38,7 +38,7 @@ class ProductResource extends Resource
                             ->prefix('$'),
                     ])
                     ->columns(2),
-                Forms\Components\Section::make('Product Image')
+                Forms\Components\Section::make('صورة المنتج')
                     ->schema([
                         Forms\Components\FileUpload::make('image')
                             ->image()
@@ -46,15 +46,15 @@ class ProductResource extends Resource
                             ->directory('product-images')
                             ->imageEditor(),
                     ]),
-                Forms\Components\Section::make('Description')
+                Forms\Components\Section::make('الوصف')
                     ->schema([
                         Forms\Components\Textarea::make('description')
                             ->columnSpanFull(),
                     ]),
-                Forms\Components\Section::make('Bonus Settings')
+                Forms\Components\Section::make('إعدادات البونص')
                     ->schema([
                         Forms\Components\Toggle::make('bonus_eligible')
-                            ->label('Bonus Eligible')
+                            ->label('مؤهل للبونص')
                             ->default(false),
                         Forms\Components\Textarea::make('bonus_notes')
                             ->nullable()
@@ -80,7 +80,7 @@ class ProductResource extends Resource
                     ->sortable(),
                 Tables\Columns\IconColumn::make('bonus_eligible')
                     ->boolean()
-                    ->label('Bonus Eligible'),
+                    ->label('مؤهل للبونص'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),

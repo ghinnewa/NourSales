@@ -17,12 +17,12 @@ class PaymentResource extends Resource
 {
     protected static ?string $model = Payment::class;
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
-    protected static ?string $navigationGroup = 'Sales';
+    protected static ?string $navigationGroup = 'المبيعات';
 
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Select::make('order_id')->label('Invoice')->required()->searchable()->live()
+            Forms\Components\Select::make('order_id')->label('الفاتورة')->required()->searchable()->live()
                 ->options(function (Forms\Get $get): array {
                     $query = Order::query()->with('pharmacy');
 
@@ -45,11 +45,11 @@ class PaymentResource extends Resource
             Forms\Components\TextInput::make('amount')->required()->numeric()->minValue(0.01),
             Forms\Components\DatePicker::make('payment_date')->required()->default(now()->toDateString()),
             Forms\Components\Select::make('payment_method')
-                ->options(['cash' => 'Cash', 'bank_transfer' => 'Bank Transfer', 'cheque' => 'Cheque', 'other' => 'Other'])
+                ->options(['cash' => 'نقداً', 'bank_transfer' => 'تحويل مصرفي', 'cheque' => 'صك', 'other' => 'أخرى'])
                 ->required()
                 ->live(),
             Forms\Components\Textarea::make('notes')->columnSpanFull(),
-            Forms\Components\Section::make('Bonus / Deal Notes')->schema([
+            Forms\Components\Section::make('ملاحظات البونص والاتفاق')->schema([
                 Forms\Components\Toggle::make('is_cash_bonus')
                     ->default(false)
                     ->helperText(fn (Forms\Get $get): string => $get('payment_method') === 'cash'
@@ -88,12 +88,12 @@ class PaymentResource extends Resource
             Tables\Columns\TextColumn::make('amount')->money('USD'),
             Tables\Columns\TextColumn::make('payment_date')->date(),
             Tables\Columns\TextColumn::make('payment_method'),
-            Tables\Columns\IconColumn::make('is_cash_bonus')->boolean()->label('Cash Bonus'),
-            Tables\Columns\IconColumn::make('is_single_transaction_bonus')->boolean()->label('Single Tx Bonus'),
+            Tables\Columns\IconColumn::make('is_cash_bonus')->boolean()->label('بونص الدفع النقدي'),
+            Tables\Columns\IconColumn::make('is_single_transaction_bonus')->boolean()->label('بونص الدفع دفعة واحدة'),
             Tables\Columns\TextColumn::make('created_at')->dateTime(),
         ])->filters([
             SelectFilter::make('payment_method')->options(['cash'=>'Cash','bank_transfer'=>'Bank Transfer','cheque'=>'Cheque','other'=>'Other']),
-            SelectFilter::make('pharmacy_id')->relationship('pharmacy', 'pharmacy_name')->label('Pharmacy'),
+            SelectFilter::make('pharmacy_id')->relationship('pharmacy', 'pharmacy_name')->label('الصيدلية'),
             Filter::make('payment_date_range')->form([
                 Forms\Components\DatePicker::make('from'), Forms\Components\DatePicker::make('until'),
             ])->query(fn ($query, array $data) => $query

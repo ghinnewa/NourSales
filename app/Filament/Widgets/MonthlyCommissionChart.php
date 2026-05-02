@@ -7,7 +7,7 @@ use Filament\Widgets\ChartWidget;
 
 class MonthlyCommissionChart extends ChartWidget
 {
-    protected static ?string $heading = 'Monthly Commission (Closed Invoices)';
+    protected static ?string $heading = 'العمولة الشهرية';
     protected int|string|array $columnSpan = 'full';
 
     protected function getData(): array
@@ -31,8 +31,8 @@ class MonthlyCommissionChart extends ChartWidget
 
         return [
             'datasets' => [
-                ['label' => '5% Commission', 'data' => $rate5, 'backgroundColor' => '#0D9488'],
-                ['label' => '3% Commission', 'data' => $rate3, 'backgroundColor' => '#F59E0B'],
+                ['label' => 'عمولة 5%', 'data' => $rate5, 'backgroundColor' => '#0D9488'],
+                ['label' => 'عمولة 3%', 'data' => $rate3, 'backgroundColor' => '#F59E0B'],
             ],
             'labels' => $months->map(fn (Carbon $month) => $month->format('M Y'))->all(),
         ];

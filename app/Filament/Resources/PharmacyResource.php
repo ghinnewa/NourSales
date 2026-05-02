@@ -19,31 +19,31 @@ class PharmacyResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
 
-    protected static ?string $navigationGroup = 'CRM';
+    protected static ?string $navigationGroup = 'إدارة العملاء';
 
-    protected static ?string $navigationLabel = 'Pharmacies';
+    protected static ?string $navigationLabel = 'الصيدليات';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Pharmacy Details')
+                Forms\Components\Section::make('بيانات الصيدلية')
                     ->schema([
                         Forms\Components\TextInput::make('pharmacy_name')->required()->maxLength(255),
                         Forms\Components\TextInput::make('owner_name')->maxLength(255),
                         Forms\Components\TextInput::make('phone')->maxLength(50),
                         Forms\Components\TextInput::make('area')->maxLength(255),
                     ])->columns(2),
-                Forms\Components\Section::make('Location')
+                Forms\Components\Section::make('الموقع')
                     ->schema([
                         Forms\Components\Textarea::make('address')->columnSpanFull(),
                         Forms\Components\TextInput::make('google_maps_link')->url()->maxLength(1000)->columnSpanFull(),
                     ]),
-                Forms\Components\Section::make('Notes')
+                Forms\Components\Section::make('الملاحظات')
                     ->schema([
                         Forms\Components\Textarea::make('notes')->rows(4)->columnSpanFull(),
                     ]),
-                Forms\Components\Section::make('Commercial Notes')
+                Forms\Components\Section::make('ملاحظات تجارية')
                     ->schema([
                         Forms\Components\Textarea::make('deal_notes')->rows(4)->nullable(),
                         Forms\Components\Textarea::make('payment_notes')->rows(4)->nullable(),
@@ -60,7 +60,7 @@ class PharmacyResource extends Resource
                 Tables\Columns\TextColumn::make('owner_name')->searchable(),
                 Tables\Columns\TextColumn::make('phone')->searchable(),
                 Tables\Columns\TextColumn::make('area')->searchable(),
-                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable(),
+                Tables\Columns\TextColumn::make('created_at')->label('تاريخ الإضافة')->dateTime()->sortable(),
             ])
             ->filters([
                 SelectFilter::make('area')

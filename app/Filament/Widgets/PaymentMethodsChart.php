@@ -6,7 +6,7 @@ use Filament\Widgets\ChartWidget;
 
 class PaymentMethodsChart extends ChartWidget
 {
-    protected static ?string $heading = 'Payment Methods';
+    protected static ?string $heading = 'طرق الدفع';
 
     protected function getData(): array
     {
@@ -17,7 +17,7 @@ class PaymentMethodsChart extends ChartWidget
                 'data' => collect($methods)->map(fn (string $m) => Payment::where('payment_method', $m)->count())->all(),
                 'backgroundColor' => ['#22C55E', '#3B82F6', '#A855F7', '#F97316'],
             ]],
-            'labels' => $methods,
+            'labels' => ['نقداً','تحويل مصرفي','صك','أخرى'],
         ];
     }
 

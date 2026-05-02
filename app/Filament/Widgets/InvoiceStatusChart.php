@@ -6,7 +6,7 @@ use Filament\Widgets\ChartWidget;
 
 class InvoiceStatusChart extends ChartWidget
 {
-    protected static ?string $heading = 'Invoice Status';
+    protected static ?string $heading = 'حالات الفواتير';
 
     protected function getData(): array
     {
@@ -18,7 +18,7 @@ class InvoiceStatusChart extends ChartWidget
                 'data' => $counts,
                 'backgroundColor' => ['#3B82F6', '#F97316', '#16A34A', '#DC2626'],
             ]],
-            'labels' => $statuses,
+            'labels' => ['قيد الانتظار','تم التسليم','مغلقة','ملغاة'],
         ];
     }
 

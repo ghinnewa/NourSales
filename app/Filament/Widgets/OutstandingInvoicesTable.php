@@ -10,7 +10,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class OutstandingInvoicesTable extends BaseWidget
 {
-    protected static ?string $heading = 'Outstanding Invoices';
+    protected static ?string $heading = 'الفواتير المستحقة';
 
     protected int|string|array $columnSpan = 'full';
 
@@ -31,7 +31,7 @@ class OutstandingInvoicesTable extends BaseWidget
             ])
             ->defaultSort('total_price', 'desc')
             ->actions([
-                Tables\Actions\Action::make('view')->label('View Invoice')->url(fn (Order $record): string => OrderResource::getUrl('view', ['record' => $record])),
+                Tables\Actions\Action::make('view')->label('عرض الفاتورة')->url(fn (Order $record): string => OrderResource::getUrl('view', ['record' => $record])),
             ])
             ->emptyStateHeading('No outstanding invoices');
     }
