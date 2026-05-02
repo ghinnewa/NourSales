@@ -40,8 +40,6 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
-<<<<<<< HEAD
-=======
 
     public function payments(): HasMany
     {
@@ -75,5 +73,4 @@ class Order extends Model
     {
         app(OrderPaymentService::class)->recalculateOrder($this->fresh(), $completedDate);
     }
->>>>>>> 29d7a803bcadfd898c5fffc35350b9d60f2a165a
 }
