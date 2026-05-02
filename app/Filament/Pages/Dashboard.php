@@ -2,12 +2,14 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Widgets\PharmaciesOverview;
-use App\Filament\Widgets\SalesStatsWidget;
-use App\Filament\Widgets\CommissionStatsWidget;
+use App\Filament\Widgets\BusinessOverviewStats;
+use App\Filament\Widgets\InvoiceStatusChart;
+use App\Filament\Widgets\MonthlyCommissionChart;
+use App\Filament\Widgets\MonthlySalesPaymentsChart;
+use App\Filament\Widgets\OutstandingBalanceByPharmacyChart;
+use App\Filament\Widgets\OutstandingInvoicesTable;
+use App\Filament\Widgets\PaymentMethodsChart;
 use App\Filament\Widgets\RecentPharmacies;
-use App\Filament\Widgets\DebtStatsWidget;
-use App\Filament\Widgets\FinancialStatsWidget;
 use Filament\Pages\Dashboard as BaseDashboard;
 
 class Dashboard extends BaseDashboard
@@ -17,12 +19,19 @@ class Dashboard extends BaseDashboard
     public function getWidgets(): array
     {
         return [
-            PharmaciesOverview::class,
+            BusinessOverviewStats::class,
+            MonthlySalesPaymentsChart::class,
+            MonthlyCommissionChart::class,
+            InvoiceStatusChart::class,
+            PaymentMethodsChart::class,
+            OutstandingBalanceByPharmacyChart::class,
             RecentPharmacies::class,
-            SalesStatsWidget::class,
-            CommissionStatsWidget::class,
-            FinancialStatsWidget::class,
-            DebtStatsWidget::class,
+            OutstandingInvoicesTable::class,
         ];
+    }
+
+    public function getColumns(): int|array
+    {
+        return 2;
     }
 }
