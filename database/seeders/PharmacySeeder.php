@@ -15,6 +15,9 @@ class PharmacySeeder extends Seeder
             ['pharmacy_name' => 'CityCare Pharmacy', 'owner_name' => 'Rana Ali', 'phone' => '555-1003', 'area' => 'Market District', 'address' => '9 Market Road'],
             ['pharmacy_name' => 'Sunrise Drugstore', 'owner_name' => 'Khaled Omar', 'phone' => '555-1004', 'area' => 'North Heights', 'address' => '221 Hill Street'],
             ['pharmacy_name' => 'MediPoint Pharmacy', 'owner_name' => 'Nour Mostafa', 'phone' => '555-1005', 'area' => 'Riverside', 'address' => '78 River Lane', 'notes' => 'Interested in skin-care bundles.'],
+            ['pharmacy_name' => 'Blue Sky Pharmacy', 'owner_name' => 'Alaa Fares', 'phone' => '555-1006', 'area' => 'East Gate', 'address' => '17 East Gate Blvd'],
+            ['pharmacy_name' => 'Family Med Pharmacy', 'owner_name' => 'Samir Nabil', 'phone' => '555-1007', 'area' => 'Old Town', 'address' => '3 Heritage Street'],
+            ['pharmacy_name' => 'CarePlus Pharmacy', 'owner_name' => 'Hana Elsayed', 'phone' => '555-1008', 'area' => 'South Park', 'address' => '90 Park Avenue', 'google_maps_link' => 'https://maps.google.com/?q=90+Park+Avenue'],
         ];
 
         foreach ($pharmacies as $pharmacy) {
