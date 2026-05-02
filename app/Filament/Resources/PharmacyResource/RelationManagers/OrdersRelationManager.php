@@ -3,10 +3,6 @@
 namespace App\Filament\Resources\PharmacyResource\RelationManagers;
 
 use App\Filament\Resources\OrderResource;
-<<<<<<< HEAD
-use Filament\Forms;
-=======
->>>>>>> 29d7a803bcadfd898c5fffc35350b9d60f2a165a
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -26,13 +22,9 @@ class OrdersRelationManager extends RelationManager
             Tables\Columns\TextColumn::make('total_price')->money('USD'),
             Tables\Columns\TextColumn::make('commission_amount')->money('USD'),
         ])->headerActions([
-<<<<<<< HEAD
-            Tables\Actions\CreateAction::make()
-=======
             Tables\Actions\Action::make('createOrder')
                 ->label('Create Order / Invoice')
                 ->icon('heroicon-o-plus')
->>>>>>> 29d7a803bcadfd898c5fffc35350b9d60f2a165a
                 ->url(fn () => OrderResource::getUrl('create', ['pharmacy_id' => $this->ownerRecord->id])),
         ])->actions([
             Tables\Actions\ViewAction::make(),
