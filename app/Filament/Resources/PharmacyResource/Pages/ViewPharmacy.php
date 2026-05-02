@@ -5,6 +5,7 @@ namespace App\Filament\Resources\PharmacyResource\Pages;
 use App\Filament\Resources\OrderResource;
 use App\Filament\Resources\PaymentResource;
 use App\Filament\Resources\PharmacyResource;
+use App\Models\Pharmacy;
 use Filament\Actions;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
@@ -30,9 +31,9 @@ class ViewPharmacy extends ViewRecord
                 Infolists\Components\TextEntry::make('pharmacy_name'), Infolists\Components\TextEntry::make('owner_name'), Infolists\Components\TextEntry::make('phone'),
             ])->columns(3),
             Infolists\Components\Section::make('Current Balance')->schema([
-                Infolists\Components\TextEntry::make('total_invoices')->state(fn($r)=>number_format($r->totalOrdersValue(),2)),
-                Infolists\Components\TextEntry::make('total_payments')->state(fn($r)=>number_format($r->totalPaymentsValue(),2)),
-                Infolists\Components\TextEntry::make('outstanding')->state(fn($r)=>number_format($r->currentBalance(),2)),
+                Infolists\Components\TextEntry::make('total_invoices')->state(fn (?Pharmacy $record): string => number_format($record?->totalOrdersValue() ?? 0, 2)),
+                Infolists\Components\TextEntry::make('total_payments')->state(fn (?Pharmacy $record): string => number_format($record?->totalPaymentsValue() ?? 0, 2)),
+                Infolists\Components\TextEntry::make('outstanding')->state(fn (?Pharmacy $record): string => number_format($record?->currentBalance() ?? 0, 2)),
             ])->columns(3),
         ]);
     }

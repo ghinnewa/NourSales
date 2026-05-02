@@ -1,6 +1,7 @@
 <?php
 namespace App\Filament\Resources\OrderResource\Pages;
 
+use App\Models\Order;
 use App\Filament\Resources\OrderResource;
 use Filament\Actions;
 use Filament\Infolists\Components\RepeatableEntry;
@@ -28,8 +29,10 @@ class ViewOrder extends ViewRecord
             Section::make('Invoice Summary')->schema([
                 TextEntry::make('id')->label('Invoice #'), TextEntry::make('pharmacy.pharmacy_name'), TextEntry::make('invoice_date')->date(), TextEntry::make('status')->badge(),
                 TextEntry::make('total_price')->money('USD'), TextEntry::make('paid_amount')->money('USD'), TextEntry::make('remaining_amount')->money('USD'), TextEntry::make('closed_at')->dateTime(),
-                TextEntry::make('commission_rate')->formatStateUsing(fn($s)=>$s?"{$s}%":'-'), TextEntry::make('commission_amount')->money('USD'),
-                TextEntry::make('commission_explain')->state(fn($r)=>$r->isFullyPaid() ? 'Paid: 5% if closed within 2 months, otherwise 3%.' : 'Unpaid/partial: eligible for 5% if fully paid before invoice date + 2 months.'),
+                TextEntry::make('commission_rate')->formatStateUsing(fn ($state): string => $state ? "{$state}%" : '-'), TextEntry::make('commission_amount')->money('USD'),
+                TextEntry::make('commission_explain')->state(fn (?Order $record): string => $record?->isFullyPaid()
+                    ? 'Paid: 5% if closed within 2 months, otherwise 3%.'
+                    : 'Unpaid/partial: eligible for 5% if fully paid before invoice date + 2 months.'),
             ])->columns(2),
             Section::make('Invoice Items')->schema([RepeatableEntry::make('orderItems')->schema([
                 TextEntry::make('product.name'),TextEntry::make('quantity'),TextEntry::make('price_at_time')->money('USD'),TextEntry::make('line_total')->money('USD')])->columns(4)]),
