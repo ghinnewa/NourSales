@@ -33,15 +33,11 @@ class ViewPharmacy extends ViewRecord
                     Infolists\Components\TextEntry::make('google_maps_link')->label('Google Maps Link')->url(fn ($state) => $state, true),
                     Infolists\Components\TextEntry::make('notes')->label('Notes'),
                 ])->columns(2),
-            Infolists\Components\Section::make('Current Balance')->schema([
-                Infolists\Components\TextEntry::make('coming_soon_balance')->state('Coming soon'),
-            ]),
-            Infolists\Components\Section::make('Orders History')->schema([
-                Infolists\Components\TextEntry::make('coming_soon_orders')->state('Coming soon'),
-            ]),
-            Infolists\Components\Section::make('Payments History')->schema([
-                Infolists\Components\TextEntry::make('coming_soon_payments')->state('Coming soon'),
-            ]),
+            Infolists\Components\Section::make('Financial Summary')->schema([
+                Infolists\Components\TextEntry::make('current_balance')->state(fn ($record) => '$'.number_format($record->currentBalance(), 2)),
+                Infolists\Components\TextEntry::make('total_orders')->state(fn ($record) => '$'.number_format($record->totalOrdersValue(), 2)),
+                Infolists\Components\TextEntry::make('total_payments')->state(fn ($record) => '$'.number_format($record->totalPaymentsValue(), 2)),
+            ])->columns(3),
         ]);
     }
 }
