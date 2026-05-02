@@ -24,4 +24,24 @@ class Pharmacy extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function totalOrdersValue(): float
+    {
+        return (float) $this->orders()->sum('total_price');
+    }
+
+    public function totalPaymentsValue(): float
+    {
+        return (float) $this->payments()->sum('amount');
+    }
+
+    public function currentBalance(): float
+    {
+        return $this->totalOrdersValue() - $this->totalPaymentsValue();
+    }
 }

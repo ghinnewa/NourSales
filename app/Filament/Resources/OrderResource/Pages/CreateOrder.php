@@ -8,6 +8,17 @@ class CreateOrder extends CreateRecord
 {
     protected static string $resource = OrderResource::class;
 
+    public function mount(): void
+    {
+        parent::mount();
+
+        if (request()->has('pharmacy_id')) {
+            $this->form->fill([
+                'pharmacy_id' => request()->integer('pharmacy_id'),
+            ]);
+        }
+    }
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         return OrderDataCalculator::calculate($data);

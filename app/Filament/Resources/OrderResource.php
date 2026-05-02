@@ -24,15 +24,15 @@ class OrderResource extends Resource
         return $form->schema([
             Forms\Components\Section::make('Invoice Details')->schema([
                 Forms\Components\Select::make('pharmacy_id')->relationship('pharmacy', 'pharmacy_name')->searchable()->required(),
-                Forms\Components\DatePicker::make('invoice_date')->required()->default(now()),
+                Forms\Components\DatePicker::make('invoice_date')->required()->default(now()->toDateString()),
                 Forms\Components\Select::make('status')->options([
                     'pending' => 'Pending','delivered' => 'Delivered','closed' => 'Closed','cancelled' => 'Cancelled',
                 ])->required()->default('pending')->live(),
-                Forms\Components\DateTimePicker::make('closed_at')->required(fn (Forms\Get $get): bool => $get('status') === 'closed')->visible(fn (Forms\Get $get): bool => $get('status') === 'closed'),
+                Forms\Components\DateTimePicker::make('closed_at')->nullable()->required(fn (Forms\Get $get): bool => $get('status') === 'closed')->visible(fn (Forms\Get $get): bool => $get('status') === 'closed'),
                 Forms\Components\Textarea::make('notes')->columnSpanFull(),
             ])->columns(2),
             Forms\Components\Section::make('Order Items')->schema([
-                Forms\Components\Repeater::make('orderItems')->relationship()->schema([
+                Forms\Components\Repeater::make('orderItems')->schema([
                     Forms\Components\Select::make('product_id')->label('Product')->options(fn () => Product::query()->get()->mapWithKeys(fn ($p) => [$p->id => trim($p->name.' | '.$p->brand.' | $'.number_format((float)$p->price,2))])->toArray())->searchable()->required()->live()->afterStateUpdated(function ($state, Forms\Set $set) {
                         $product = Product::find($state); if ($product) { $set('price_at_time', $product->price); $set('line_total', round($product->price * ((int)1), 2)); }
                     }),
@@ -58,6 +58,9 @@ class OrderResource extends Resource
             Tables\Columns\TextColumn::make('pharmacy.pharmacy_name')->searchable(),
             Tables\Columns\TextColumn::make('invoice_date')->date()->sortable(),
             Tables\Columns\TextColumn::make('total_price')->money('USD')->sortable(),
+            Tables\Columns\TextColumn::make('paid_amount')->label('Paid Amount')->state(fn ($record) => $record->paidAmount())->money('USD'),
+            Tables\Columns\TextColumn::make('remaining_amount')->label('Remaining')->state(fn ($record) => $record->remainingAmount())->money('USD'),
+            Tables\Columns\TextColumn::make('payment_status')->badge()->state(fn ($record) => $record->paymentStatus()),
             Tables\Columns\TextColumn::make('status')->badge(),
             Tables\Columns\TextColumn::make('closed_at')->dateTime(),
             Tables\Columns\TextColumn::make('commission_rate')->formatStateUsing(fn ($state) => $state !== null ? number_format((float)$state, 2).'%' : '-'),

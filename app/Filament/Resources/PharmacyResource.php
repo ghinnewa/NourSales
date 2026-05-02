@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PharmacyResource\Pages;
 use App\Filament\Resources\PharmacyResource\RelationManagers\OrdersRelationManager;
+use App\Filament\Resources\PharmacyResource\RelationManagers\PaymentsRelationManager;
 use App\Models\Pharmacy;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -75,6 +76,7 @@ class PharmacyResource extends Resource
     {
         return [
             OrdersRelationManager::class,
+            PaymentsRelationManager::class,
         ];
     }
 
