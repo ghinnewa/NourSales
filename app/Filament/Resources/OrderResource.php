@@ -132,9 +132,16 @@ class OrderResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            Tables\Columns\TextColumn::make('id')->label('Invoice #'), Tables\Columns\TextColumn::make('pharmacy.pharmacy_name'), Tables\Columns\TextColumn::make('invoice_date')->date(),
-            Tables\Columns\TextColumn::make('total_price')->money('USD'), Tables\Columns\TextColumn::make('paid_amount')->money('USD'), Tables\Columns\TextColumn::make('remaining_amount')->money('USD'),
-            Tables\Columns\TextColumn::make('payment_status')->badge(), Tables\Columns\TextColumn::make('status')->badge()->label('حالات الفواتير'), Tables\Columns\TextColumn::make('commission_amount')->money('USD'), Tables\Columns\TextColumn::make('created_at')->dateTime(),
+            Tables\Columns\TextColumn::make('id')->label('رقم الفاتورة'),
+            Tables\Columns\TextColumn::make('pharmacy.pharmacy_name')->label('الصيدلية'),
+            Tables\Columns\TextColumn::make('invoice_date')->label('تاريخ الفاتورة')->date(),
+            Tables\Columns\TextColumn::make('total_price')->label('الإجمالي')->money('USD'),
+            Tables\Columns\TextColumn::make('paid_amount')->label('المبلغ المدفوع')->money('USD'),
+            Tables\Columns\TextColumn::make('remaining_amount')->label('المبلغ المتبقي')->money('USD'),
+            Tables\Columns\TextColumn::make('payment_status')->label('حالة الدفع')->badge(),
+            Tables\Columns\TextColumn::make('status')->badge()->label('حالة الفاتورة'),
+            Tables\Columns\TextColumn::make('commission_amount')->label('قيمة العمولة')->money('USD'),
+            Tables\Columns\TextColumn::make('created_at')->label('تاريخ الإنشاء')->dateTime(),
         ])->actions([
             Tables\Actions\ViewAction::make(), Tables\Actions\EditAction::make(), Tables\Actions\DeleteAction::make(),
             Tables\Actions\Action::make('addPayment')->label('إضافة دفعة')->url(fn(Order $record) => PaymentResource::getUrl('create', ['order_id'=>$record->id])),

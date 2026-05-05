@@ -56,10 +56,10 @@ class PharmacyResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('pharmacy_name')->searchable(),
-                Tables\Columns\TextColumn::make('owner_name')->searchable(),
-                Tables\Columns\TextColumn::make('phone')->searchable(),
-                Tables\Columns\TextColumn::make('area')->searchable(),
+                Tables\Columns\TextColumn::make('pharmacy_name')->label('اسم الصيدلية')->searchable(),
+                Tables\Columns\TextColumn::make('owner_name')->label('اسم المالك')->searchable(),
+                Tables\Columns\TextColumn::make('phone')->label('الهاتف')->searchable(),
+                Tables\Columns\TextColumn::make('area')->label('المنطقة')->searchable(),
                 Tables\Columns\TextColumn::make('created_at')->label('تاريخ الإضافة')->dateTime()->sortable(),
             ])
             ->filters([

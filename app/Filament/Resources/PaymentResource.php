@@ -83,14 +83,14 @@ class PaymentResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            Tables\Columns\TextColumn::make('order_id')->label('Invoice #'),
-            Tables\Columns\TextColumn::make('pharmacy.pharmacy_name')->searchable(),
-            Tables\Columns\TextColumn::make('amount')->money('USD'),
-            Tables\Columns\TextColumn::make('payment_date')->date(),
-            Tables\Columns\TextColumn::make('payment_method'),
+            Tables\Columns\TextColumn::make('order_id')->label('رقم الفاتورة'),
+            Tables\Columns\TextColumn::make('pharmacy.pharmacy_name')->label('الصيدلية')->searchable(),
+            Tables\Columns\TextColumn::make('amount')->label('المبلغ')->money('USD'),
+            Tables\Columns\TextColumn::make('payment_date')->label('تاريخ الدفع')->date(),
+            Tables\Columns\TextColumn::make('payment_method')->label('طريقة الدفع'),
             Tables\Columns\IconColumn::make('is_cash_bonus')->boolean()->label('بونص الدفع النقدي'),
             Tables\Columns\IconColumn::make('is_single_transaction_bonus')->boolean()->label('بونص الدفع دفعة واحدة'),
-            Tables\Columns\TextColumn::make('created_at')->dateTime(),
+            Tables\Columns\TextColumn::make('created_at')->label('تاريخ الإنشاء')->dateTime(),
         ])->filters([
             SelectFilter::make('payment_method')->options(['cash'=>'Cash','bank_transfer'=>'Bank Transfer','cheque'=>'Cheque','other'=>'Other']),
             SelectFilter::make('pharmacy_id')->relationship('pharmacy', 'pharmacy_name')->label('الصيدلية'),
