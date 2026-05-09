@@ -22,7 +22,7 @@ class RecentPharmacies extends BaseWidget
                 Tables\Columns\TextColumn::make('owner_name')->label('Owner Name'),
                 Tables\Columns\TextColumn::make('phone'),
                 Tables\Columns\TextColumn::make('area'),
-                Tables\Columns\TextColumn::make('current_balance')->state(fn (Pharmacy $record) => $record->currentBalance())->money('USD')->label('Current Balance'),
+                Tables\Columns\TextColumn::make('current_balance')->state(fn (Pharmacy $record) => $record->currentBalance())->money('USD', locale: 'en')->label('Current Balance'),
                 Tables\Columns\TextColumn::make('latest_invoice_date')
                     ->label('Latest Invoice Date')
                     ->state(fn (Pharmacy $record) => optional($record->orders()->latest('invoice_date')->first())->invoice_date)

@@ -38,8 +38,8 @@ class ProductResource extends Resource
             Tables\Columns\TextColumn::make('product_code')->label('كود المنتج')->searchable(),
             Tables\Columns\TextColumn::make('name')->label('اسم المنتج')->searchable(),
             Tables\Columns\TextColumn::make('brand')->label('العلامة التجارية')->searchable(),
-            Tables\Columns\TextColumn::make('price')->label('السعر')->money('USD')->sortable(),
-            Tables\Columns\TextColumn::make('customer_price')->label('سعر البيع للعميل')->money('USD')->sortable(),
+            Tables\Columns\TextColumn::make('price')->label('السعر')->money('USD', locale: 'en')->sortable(),
+            Tables\Columns\TextColumn::make('customer_price')->label('سعر البيع للعميل')->money('USD', locale: 'en')->sortable(),
         ])->actions([
             Tables\Actions\ViewAction::make(),
             Tables\Actions\EditAction::make(),

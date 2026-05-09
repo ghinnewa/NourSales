@@ -32,7 +32,7 @@ class ViewProduct extends ViewRecord
                         Infolists\Components\TextEntry::make('name'),
                         Infolists\Components\TextEntry::make('brand'),
                         Infolists\Components\TextEntry::make('price')
-                            ->money('USD'),
+                            ->money('USD', locale: 'en'),
                         Infolists\Components\IconEntry::make('bonus_eligible')
                             ->boolean()
                             ->label('Bonus Eligible'),

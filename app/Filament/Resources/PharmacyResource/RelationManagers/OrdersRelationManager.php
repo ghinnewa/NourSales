@@ -19,8 +19,8 @@ class OrdersRelationManager extends RelationManager
             Tables\Columns\TextColumn::make('id'),
             Tables\Columns\TextColumn::make('invoice_date')->date()->sortable(),
             Tables\Columns\TextColumn::make('status')->badge(),
-            Tables\Columns\TextColumn::make('total_price')->money('USD'),
-            Tables\Columns\TextColumn::make('commission_amount')->money('USD'),
+            Tables\Columns\TextColumn::make('total_price')->money('USD', locale: 'en'),
+            Tables\Columns\TextColumn::make('commission_amount')->money('USD', locale: 'en'),
         ])->headerActions([
             Tables\Actions\Action::make('createOrder')
                 ->label('Create Order / Invoice')

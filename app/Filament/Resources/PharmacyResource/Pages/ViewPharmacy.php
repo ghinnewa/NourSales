@@ -45,15 +45,15 @@ class ViewPharmacy extends ViewRecord
                     Infolists\Components\TextEntry::make('id')->label('Invoice #'),
                     Infolists\Components\TextEntry::make('invoice_date')->date(),
                     Infolists\Components\TextEntry::make('status')->badge(),
-                    Infolists\Components\TextEntry::make('total_price')->money('USD')->label('Invoice Total'),
-                    Infolists\Components\TextEntry::make('remaining_amount')->money('USD'),
+                    Infolists\Components\TextEntry::make('total_price')->money('USD', locale: 'en')->label('Invoice Total'),
+                    Infolists\Components\TextEntry::make('remaining_amount')->money('USD', locale: 'en'),
                 ])->columns(5),
             ]),
             Infolists\Components\Section::make('Payment History')->schema([
                 Infolists\Components\RepeatableEntry::make('payments')->schema([
                     Infolists\Components\TextEntry::make('order_id')->label('Invoice #'),
                     Infolists\Components\TextEntry::make('payment_date')->date(),
-                    Infolists\Components\TextEntry::make('amount')->money('USD'),
+                    Infolists\Components\TextEntry::make('amount')->money('USD', locale: 'en'),
                     Infolists\Components\TextEntry::make('payment_method'),
                     Infolists\Components\IconEntry::make('is_cash_bonus')->boolean()->label('Cash Bonus'),
                     Infolists\Components\IconEntry::make('is_single_transaction_bonus')->boolean()->label('Single Tx Bonus'),
