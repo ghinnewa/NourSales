@@ -31,4 +31,6 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'company_whatsapp_number' => env('COMPANY_WHATSAPP_NUMBER'),
+
 ];
