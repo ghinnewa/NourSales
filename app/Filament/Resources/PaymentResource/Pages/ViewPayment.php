@@ -17,7 +17,7 @@ class ViewPayment extends ViewRecord
             Section::make('Payment')->schema([
                 TextEntry::make('pharmacy.pharmacy_name')->label('Pharmacy'),
                 TextEntry::make('order_id')->label('Invoice #'),
-                TextEntry::make('amount')->money('USD'),
+                TextEntry::make('amount')->money('USD', locale: 'en'),
                 TextEntry::make('payment_date')->date(),
                 TextEntry::make('payment_method'),
                 \Filament\Infolists\Components\IconEntry::make('is_cash_bonus')->boolean()->label('Cash Bonus'),

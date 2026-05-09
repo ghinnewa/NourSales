@@ -16,7 +16,7 @@ class PaymentsRelationManager extends RelationManager
     {
         return $table->columns([
             Tables\Columns\TextColumn::make('order_id')->label('Order #'),
-            Tables\Columns\TextColumn::make('amount')->money('USD'),
+            Tables\Columns\TextColumn::make('amount')->money('USD', locale: 'en'),
             Tables\Columns\TextColumn::make('payment_date')->date()->sortable(),
             Tables\Columns\TextColumn::make('payment_method'),
         ])->headerActions([

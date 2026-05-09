@@ -85,7 +85,7 @@ class PaymentResource extends Resource
         return $table->columns([
             Tables\Columns\TextColumn::make('order_id')->label('Invoice #'),
             Tables\Columns\TextColumn::make('pharmacy.pharmacy_name')->searchable(),
-            Tables\Columns\TextColumn::make('amount')->money('USD'),
+            Tables\Columns\TextColumn::make('amount')->money('USD', locale: 'en'),
             Tables\Columns\TextColumn::make('payment_date')->date(),
             Tables\Columns\TextColumn::make('payment_method'),
             Tables\Columns\IconColumn::make('is_cash_bonus')->boolean()->label('بونص الدفع النقدي'),
