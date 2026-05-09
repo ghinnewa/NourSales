@@ -13,21 +13,18 @@ class InvoiceCalculationService
         return round(max(0, $quantity) * max(0, $priceAtTime), 2);
     }
 
-    public function calculateInvoiceTotal(array $items): float
+    public function calculateCustomerLineTotal(int $quantity, ?float $customerPrice): ?float
     {
-        $total = 0;
-
-        foreach ($items as $item) {
-            $quantity = max(0, (int) ($item['quantity'] ?? 0));
-            $priceAtTime = max(0, (float) ($item['price_at_time'] ?? 0));
-            $lineTotal = array_key_exists('line_total', $item)
-                ? round((float) $item['line_total'], 2)
-                : $this->calculateLineTotal($quantity, $priceAtTime);
-
-            $total += max(0, $lineTotal);
+        if ($customerPrice === null) {
+            return null;
         }
 
-        return round($total, 2);
+        return round(max(0, $quantity) * max(0, $customerPrice), 2);
+    }
+
+    public function calculateInvoiceTotal(array $items): float
+    {
+        return round(collect($items)->sum(fn (array $item) => max(0, (float) ($item['line_total'] ?? 0))), 2);
     }
 
     public function calculatePaidAmount(Order $order): float
@@ -53,16 +50,11 @@ class InvoiceCalculationService
             $updates['closed_at'] = null;
             $updates['commission_rate'] = null;
             $updates['commission_amount'] = 0;
-
             return;
         }
 
-        $closedAt = $order->closed_at
-            ? Carbon::parse($order->closed_at)
-            : now();
-
+        $closedAt = $order->closed_at ? Carbon::parse($order->closed_at) : now();
         $rate = $this->calculateCommissionRate($order, $closedAt);
-
         $updates['closed_at'] = $closedAt;
         $updates['commission_rate'] = $rate;
         $updates['commission_amount'] = round($invoiceTotal * ($rate / 100), 2);
@@ -72,22 +64,21 @@ class InvoiceCalculationService
     {
         $order->loadMissing('orderItems', 'payments');
 
-        $items = $order->orderItems
-            ->map(fn (OrderItem $item): array => [
-                'quantity' => $item->quantity,
-                'price_at_time' => $item->price_at_time,
-                'line_total' => $item->line_total,
-            ])
-            ->all();
+        $items = $order->orderItems->map(function (OrderItem $item): array {
+            $lineTotal = $this->calculateLineTotal((int) $item->quantity, (float) $item->price_at_time);
+            $customerLineTotal = $this->calculateCustomerLineTotal((int) $item->quantity, $item->customer_price !== null ? (float) $item->customer_price : null);
+
+            $item->forceFill([
+                'line_total' => $lineTotal,
+                'customer_line_total' => $customerLineTotal,
+            ])->saveQuietly();
+
+            return ['line_total' => $lineTotal];
+        })->all();
 
         $total = $this->calculateInvoiceTotal($items);
-
-        $updates = [
-            'total_price' => $total,
-        ];
-
+        $updates = ['total_price' => $total];
         $this->applyCommissionForOrder($order, $total, $updates);
-
         $order->forceFill($updates)->saveQuietly();
     }
 }
