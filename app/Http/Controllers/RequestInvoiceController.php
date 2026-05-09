@@ -66,12 +66,14 @@ class RequestInvoiceController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
-                $lines[] = $product->name . ' x ' . $qty;
+                $pricePart = $product->price !== null ? ' @ ' . number_format((float) $product->price, 2) : '';
+                $lineTotalPart = $lineTotal !== null ? ' = ' . number_format((float) $lineTotal, 2) : '';
+                $lines[] = $product->name . ' x ' . $qty . $pricePart . $lineTotalPart;
             }
 
             $invoice->items()->createMany($items);
 
-            $message = $this->buildWhatsAppMessage($invoice, $lines);
+            $message = $this->buildWhatsAppMessage($invoice, $lines, $total > 0 ? (string) $total : null);
             $invoice->update([
                 'whatsapp_message' => $message,
                 'total_amount' => $total > 0 ? $total : null,
@@ -96,7 +98,7 @@ class RequestInvoiceController extends Controller
         ]);
     }
 
-    private function buildWhatsAppMessage(RequestInvoice $invoice, array $lines): string
+    private function buildWhatsAppMessage(RequestInvoice $invoice, array $lines, ?string $totalAmount): string
     {
         $message = "New Invoice Request\n\n";
         $message .= "Requester: {$invoice->requester_name}\n";
@@ -108,8 +110,11 @@ class RequestInvoiceController extends Controller
             $message .= ($index + 1) . '. ' . $line . "\n";
         }
 
-        $message .= "\nNotes:\n" . ($invoice->notes ?: '-') . "\n\n";
-        $message .= "Request ID: #{$invoice->id}";
+        $message .= "\nNotes:\n" . ($invoice->notes ?: '-') . "\n";
+        if ($totalAmount !== null) {
+            $message .= "\nTotal: " . number_format((float) $totalAmount, 2) . "\n";
+        }
+        $message .= "\nRequest ID: #{$invoice->id}";
 
         return $message;
     }
