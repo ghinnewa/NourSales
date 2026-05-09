@@ -38,18 +38,6 @@ class OrderItem extends Model
                 (float) $item->price_at_time,
             );
         });
-
-        static::saved(function (OrderItem $item): void {
-            if ($item->order) {
-                app(InvoiceCalculationService::class)->recalculateAndPersistOrderTotals($item->order->fresh());
-            }
-        });
-
-        static::deleted(function (OrderItem $item): void {
-            if ($item->order_id && ($order = Order::find($item->order_id))) {
-                app(InvoiceCalculationService::class)->recalculateAndPersistOrderTotals($order->fresh());
-            }
-        });
     }
 
     public function order(): BelongsTo

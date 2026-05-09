@@ -23,6 +23,7 @@ class Order extends Model
         'notes',
         'deal_notes',
         'internal_notes',
+        'offer_notes',
     ];
 
     protected $casts = [
