@@ -4,11 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Order;
-use App\Models\Product;
-use App\Services\InvoiceCalculationService;
 use Filament\Forms;
 use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -25,21 +22,13 @@ class OrderResource extends Resource
 
     public static function form(Form $form): Form
     {
-        $recalculateLineTotal = static function (Get $get, Set $set): void {
-            $set(
-                'line_total',
-                app(InvoiceCalculationService::class)->calculateLineTotal(
-                    (int) ($get('quantity') ?? 0),
-                    (float) ($get('price_at_time') ?? 0),
-                ),
-            );
-        };
-
         return $form->schema([
             Forms\Components\Section::make('بيانات الفاتورة')->schema([
-                Forms\Components\Select::make('pharmacy_id')->relationship('pharmacy', 'pharmacy_name')->required()->searchable()->preload(),
-                Forms\Components\DatePicker::make('invoice_date')->required()->default(now()->toDateString()),
+                Forms\Components\Select::make('pharmacy_id')->label('الصيدلية')->relationship('pharmacy', 'pharmacy_name')->required()->searchable()->preload(),
+                Forms\Components\DatePicker::make('invoice_date')->label('تاريخ الفاتورة')->required()->default(now()->toDateString()),
+                Forms\Components\TextInput::make('total_price')->label('إجمالي الفاتورة')->required()->numeric()->minValue(0.01)->prefix('$'),
                 Forms\Components\Select::make('status')
+                    ->label('الحالة')
                     ->options(['pending' => 'قيد الانتظار', 'delivered' => 'تم التسليم', 'closed' => 'مغلقة', 'cancelled' => 'ملغاة'])
                     ->default('pending')
                     ->live()
@@ -47,84 +36,14 @@ class OrderResource extends Resource
                 Forms\Components\DateTimePicker::make('closed_at')
                     ->label('تاريخ الإغلاق')
                     ->seconds(false)
-                    ->visible(fn (Get $get): bool => $get('status') === 'closed'),
+                    ->visible(fn(Get $get): bool => $get('status') === 'closed'),
+                Forms\Components\Textarea::make('notes')->label('ملاحظات')->rows(3)->nullable()->columnSpanFull(),
             ])->columns(2),
 
-            Forms\Components\Section::make('عناصر الفاتورة')->schema([
-                Forms\Components\Repeater::make('orderItems')
-                    ->relationship()
-                    ->defaultItems(1)
-                    ->schema([
-                        Forms\Components\Select::make('product_id')
-                            ->label('المنتج')
-                            ->relationship('product', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->live()
-                            ->required()
-                            ->afterStateUpdated(function ($state, Get $get, Set $set) use ($recalculateLineTotal): void {
-                                $price = (float) (Product::find($state)?->price ?? 0);
-                                $set('price_at_time', $price);
-                                $recalculateLineTotal($get, $set);
-                            }),
-                        Forms\Components\TextInput::make('quantity')
-                            ->required()
-                            ->integer()
-                            ->minValue(1)
-                            ->default(1)
-                            ->live(debounce: 300)
-                            ->afterStateUpdated($recalculateLineTotal),
-                        Forms\Components\TextInput::make('price_at_time')
-                            ->required()
-                            ->numeric()
-                            ->minValue(0)
-                            ->prefix('$')
-                            ->live(debounce: 300)
-                            ->afterStateUpdated($recalculateLineTotal),
-                        Forms\Components\TextInput::make('line_total')
-                            ->numeric()
-                            ->disabled()
-                            ->dehydrated(false)
-                            ->prefix('$'),
-                        Forms\Components\TextInput::make('bonus_quantity')
-                            ->required()
-                            ->integer()
-                            ->minValue(0)
-                            ->default(0)
-                            ->helperText(function (Get $get): ?string {
-                                $productId = $get('product_id');
-
-                                if (! $productId) {
-                                    return null;
-                                }
-
-                                $isEligible = Product::query()->whereKey($productId)->value('bonus_eligible');
-
-                                return $isEligible
-                                    ? 'Selected product is bonus eligible.'
-                                    : 'Selected product is not marked as bonus eligible.';
-                            }),
-                        Forms\Components\Textarea::make('bonus_notes')
-                            ->rows(2)
-                            ->maxLength(65535)
-                            ->nullable()
-                            ->columnSpanFull(),
-                    ])
-                    ->columns(2)
-                    ->columnSpanFull(),
-                Forms\Components\Placeholder::make('invoice_total_preview')
-                    ->label('إجمالي الفاتورة')
-                    ->content(function (Get $get): string {
-                        $total = app(InvoiceCalculationService::class)->calculateInvoiceTotal($get('orderItems') ?? []);
-
-                        return '$' . number_format($total, 2);
-                    }),
-            ]),
-
-            Forms\Components\Section::make('الملاحظات وتفاصيل الاتفاق')->schema([
-                Forms\Components\Textarea::make('notes')->rows(3)->nullable(),
-                Forms\Components\Textarea::make('deal_notes')->rows(4)->nullable(),
-                Forms\Components\Textarea::make('internal_notes')->rows(4)->nullable(),
+            Forms\Components\Section::make('ملاحظات العرض / البونص / الاتفاق')->schema([
+                Forms\Components\Textarea::make('deal_notes')->label('ملاحظات الاتفاق')->rows(3)->nullable(),
+                Forms\Components\Textarea::make('offer_notes')->label('ملاحظات العرض / البونص')->rows(3)->nullable(),
+                Forms\Components\Textarea::make('internal_notes')->label('ملاحظات داخلية')->rows(3)->nullable(),
             ])->columns(1),
         ]);
     }
@@ -132,17 +51,23 @@ class OrderResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            Tables\Columns\TextColumn::make('id')->label('Invoice #'), Tables\Columns\TextColumn::make('pharmacy.pharmacy_name'), Tables\Columns\TextColumn::make('invoice_date')->date(),
-            Tables\Columns\TextColumn::make('total_price')->money('USD'), Tables\Columns\TextColumn::make('paid_amount')->money('USD'), Tables\Columns\TextColumn::make('remaining_amount')->money('USD'),
-            Tables\Columns\TextColumn::make('payment_status')->badge(), Tables\Columns\TextColumn::make('status')->badge()->label('حالات الفواتير'), Tables\Columns\TextColumn::make('commission_amount')->money('USD'), Tables\Columns\TextColumn::make('created_at')->dateTime(),
+            Tables\Columns\TextColumn::make('id')->label('Invoice #'),
+            Tables\Columns\TextColumn::make('pharmacy.pharmacy_name')->label('الصيدلية')->searchable(),
+            Tables\Columns\TextColumn::make('invoice_date')->label('تاريخ الفاتورة')->date(),
+            Tables\Columns\TextColumn::make('total_price')->label('إجمالي الفاتورة')->money('USD'),
+            Tables\Columns\TextColumn::make('paid_amount')->label('المدفوع')->money('USD'),
+            Tables\Columns\TextColumn::make('remaining_amount')->label('المتبقي')->money('USD'),
+            Tables\Columns\TextColumn::make('status')->label('الحالة')->badge(),
+            Tables\Columns\TextColumn::make('commission_amount')->label('العمولة')->money('USD'),
+            Tables\Columns\TextColumn::make('created_at')->label('تاريخ الإنشاء')->dateTime(),
         ])->actions([
             Tables\Actions\ViewAction::make(), Tables\Actions\EditAction::make(), Tables\Actions\DeleteAction::make(),
-            Tables\Actions\Action::make('addPayment')->label('إضافة دفعة')->url(fn(Order $record) => PaymentResource::getUrl('create', ['order_id'=>$record->id])),
+            Tables\Actions\Action::make('addPayment')->label('إضافة دفعة')->url(fn(Order $record) => PaymentResource::getUrl('create', ['order_id' => $record->id])),
         ]);
     }
 
     public static function getPages(): array
     {
-        return ['index'=>Pages\ListOrders::route('/'),'create'=>Pages\CreateOrder::route('/create'),'view'=>Pages\ViewOrder::route('/{record}'),'edit'=>Pages\EditOrder::route('/{record}/edit')];
+        return ['index' => Pages\ListOrders::route('/'), 'create' => Pages\CreateOrder::route('/create'), 'view' => Pages\ViewOrder::route('/{record}'), 'edit' => Pages\EditOrder::route('/{record}/edit')];
     }
 }

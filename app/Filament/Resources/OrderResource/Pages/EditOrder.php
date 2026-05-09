@@ -2,7 +2,6 @@
 namespace App\Filament\Resources\OrderResource\Pages;
 
 use App\Filament\Resources\OrderResource;
-use App\Services\InvoiceCalculationService;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Carbon;
 
@@ -12,8 +11,6 @@ class EditOrder extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $data['total_price'] = app(InvoiceCalculationService::class)->calculateInvoiceTotal($this->data['orderItems'] ?? []);
-
         if (($data['status'] ?? null) !== 'closed') {
             $data['closed_at'] = null;
             $data['commission_rate'] = null;
@@ -25,14 +22,9 @@ class EditOrder extends EditRecord
 
             $data['closed_at'] = $closedAt;
             $data['commission_rate'] = $rate;
-            $data['commission_amount'] = round($data['total_price'] * ($rate / 100), 2);
+            $data['commission_amount'] = round((float) $data['total_price'] * ($rate / 100), 2);
         }
 
         return $data;
-    }
-
-    protected function afterSave(): void
-    {
-        app(InvoiceCalculationService::class)->recalculateAndPersistOrderTotals($this->record->fresh());
     }
 }
